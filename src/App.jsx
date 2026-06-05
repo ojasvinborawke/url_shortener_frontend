@@ -46,19 +46,6 @@ function ProtectedRoute({ children }) {
   - ensures user exists
   - ensures role is admin safely (no crash if role missing)
 */
-// function AdminRoute({ children }) {
-//   const { user, loading } = useAuth()
-
-//   if (loading) return null
-
-//   if (!user) return <Navigate to="/login" replace />
-
-//   // SAFE ACCESS: prevents crash if backend doesn't send role
-//   const { isAdmin } = useAuth() 
-//   if (!isAdmin) { return <Navigate to="/dashboard" replace /> }
-
-//   return children
-// }
 
 function AdminRoute({ children }) {
   const { user, loading, isAdmin } = useAuth()
@@ -110,14 +97,22 @@ export default function App() {
     loadUser()
   }, [])
 
-  function login(token, userData) {
+  async function login(token, userData) {
     localStorage.setItem('token', token)
     setUser(userData)
+
+    try {
+      await adminApi.links()
+      setIsAdmin(true)
+    } catch {
+      setIsAdmin(false)
+    }
   }
 
   function logout() {
     localStorage.removeItem('token')
     setUser(null)
+    setIsAdmin(false)
   }
 
   const contextValue = {
