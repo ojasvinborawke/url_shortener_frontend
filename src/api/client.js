@@ -1,4 +1,4 @@
-const BASE = 'http://52.66.251.171:8000'
+const BASE = "/api";
 
 function getToken() {
   return localStorage.getItem('token')
